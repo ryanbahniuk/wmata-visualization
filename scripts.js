@@ -1,6 +1,48 @@
 $(document).ready(function(){
+	var trains = [];
+	var ddd = initialize(trains);
 	setInterval(getTrains, 1000);
 });
+
+function initialize(trains){
+	var svg = d3.select('svg');
+	var circles = svg.selectAll('circle').data(trains);
+
+	var arrivals = circles.enter();
+
+	var maxCount = d3.max(trains);
+
+	//north
+	//shady grove 39.128381, -77.169307
+	//south
+	//franconia springfield 38.764592, -77.171032
+	//west
+	//reston 38.948469, -77.351260
+	//east
+	//largo town center 38.901238, -76.841278
+	var x = d3.scale.linear()
+	  .range([0, 1000])
+	  .domain([-77.351260, -76.841278]);
+
+	var y = d3.scale.linear()
+	  .range([1000, 0])
+	  .domain([39.128381, 38.764592]);
+
+	arrivals.append('circle')
+	.attr('x', x(0))
+	.attr('y', y(0))
+	.attr('height', 50)
+	.attr('width', 50);
+
+	return {
+		svg: svg,
+		circles: circles,
+		arrivals: arrivals,
+		maxCount: maxCount,
+		x: x,
+		y: y
+	}
+}
 
 function getTrains(){
 	var API_KEY = "6k26b5dkgcxm463nqdfwwdn3";
@@ -11,7 +53,7 @@ function getTrains(){
 }
 
 function success(response){
-	var $trains = $('.trains');
+	var $trains = $('#trains');
 	$trains.html("");
 	response.Trains.forEach(function(train, index, trains){
 		if(train.Min === "ARR" || train.Min === "BRD") {
@@ -22,6 +64,7 @@ function success(response){
 }
 
 function failure(response){
+	console.log("Couldn't connect to WMATA API!");
 }
 
 function findStation(code){
