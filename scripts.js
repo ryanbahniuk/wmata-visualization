@@ -1,10 +1,11 @@
 $(document).ready(function(){
 	var trains = [];
-	initialize(trains);
+	visualize(trains);
+	getTrains();
 	setInterval(getTrains, 1000);
 });
 
-function initialize(trains){
+function visualize(trains){
 	var svg = d3.select('svg');
 	var circles = svg.selectAll('circle').data(trains);
 
@@ -26,16 +27,18 @@ function initialize(trains){
 
 	var y = d3.scale.linear()
 	  .range([1000, 0])
-	  .domain([39.128381, 38.764592]);
+	  .domain([38.764592, 39.128381]);
 
 	arrivals.append('circle')
-	.attr('x', function(d, i) {
+	.transition()
+  .duration(500)
+	.attr('cx', function(d, i) {
 	  return x(findStation(d.LocationCode).Lon);
 	})
-	.attr('y', function(d, i) {
+	.attr('cy', function(d, i) {
 	  return y(findStation(d.LocationCode).Lat);
 	})
-	.attr('r', 20)
+	.attr('r', 10)
 	.style("fill", function(d, i){
 		return "#" + colorize(d.Line);
 	});
@@ -52,15 +55,16 @@ function getTrains(){
 }
 
 function success(response){
-	initialize(response.Trains);
-	var $trains = $('#trains');
-	$trains.html("");
-	response.Trains.forEach(function(train, index, trains){
-		if(train.Min === "ARR" || train.Min === "BRD") {
-			var template = '<li style="color: #' + colorize(train.Line) + ';">' + train.LocationName + '</li>';
-			$trains.append(template);
-		}
-	});
+	var arrivingTrains = response.Trains.filter(function(train){ return train.Min === "ARR" || train.Min == "BRD" });
+	visualize(arrivingTrains);
+	// var $trains = $('#trains');
+	// $trains.html("");
+	// response.Trains.forEach(function(train, index, trains){
+	// 	if(train.Min === "ARR" || train.Min === "BRD") {
+	// 		var template = '<li style="color: #' + colorize(train.Line) + ';">' + train.LocationName + '</li>';
+	// 		$trains.append(template);
+	// 	}
+	// });
 }
 
 function failure(response){
