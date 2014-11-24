@@ -2,7 +2,7 @@ $(document).ready(function(){
 	var trains = [];
 	visualize(trains);
 	getTrains();
-	setInterval(getTrains, 5000);
+	setInterval(getTrains, 10000);
 });
 
 function visualize(trains){
