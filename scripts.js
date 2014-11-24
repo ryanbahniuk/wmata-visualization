@@ -2,7 +2,7 @@ $(document).ready(function(){
 	var trains = [];
 	visualize(trains);
 	getTrains();
-	setInterval(getTrains, 1000);
+	setInterval(getTrains, 5000);
 });
 
 function visualize(trains){
@@ -22,14 +22,15 @@ function visualize(trains){
 	//east
 	//largo town center 38.901238, -76.841278
 	var x = d3.scale.linear()
-	  .range([0, 1000])
+	  .range([0, 700])
 	  .domain([-77.351260, -76.841278]);
 
 	var y = d3.scale.linear()
-	  .range([1000, 0])
+	  .range([700, 0])
 	  .domain([38.764592, 39.128381]);
 
 	arrivals.append('circle')
+	.style("fill", "white")
 	.transition()
   .duration(500)
 	.attr('cx', function(d, i) {
